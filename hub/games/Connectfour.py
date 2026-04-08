@@ -6,7 +6,7 @@ class Connectfour_class :
         self.board = board
         self.board_rect = self.board.get_rect(center = (500, 430))
     def board_generate(self):
-        return np.zeros(49).reshape(7, 7)
+        return np.zeros((7, 7))
     def is_valid_move(self, current_turn, board_array, current_move):
         if int(board_array[0][current_move]) == 0 :
             return True
@@ -26,7 +26,7 @@ class Connectfour_class :
         if first_index_of_move <= 3 :
             if (board_changed_vertical_line[first_index_of_move: first_index_of_move + 4] == winning_array).all():
                 return True, current_turn
-
+        
         new_board_changed_horizontal_line = np.hstack((np.zeros(1), board_changed_horizontal_line, np.zeros(1)))
         is_horizontal_line_cell_current_turn = (new_board_changed_horizontal_line == current_turn)
         not_matching_indices_list_horizontal = np.argwhere(is_horizontal_line_cell_current_turn == False)

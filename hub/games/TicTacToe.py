@@ -6,7 +6,7 @@ class Ttt_class :
         self.board = board
         self.board_rect = self.board.get_rect(center = (500, 430))
     def board_generate(self):
-        return np.zeros(100).reshape(10, 10)
+        return np.zeros((10, 10))
     def is_valid_move(self, current_turn, board_array, current_move):
         if board_array[current_move[0]][current_move[1]] == 0:
             return True

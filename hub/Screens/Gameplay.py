@@ -17,3 +17,4 @@ class Gameplay :
         self.gameclass.display(self.screen, board)
     def released(self):
         return pygame.mouse.get_pressed() == (False, False, False) 
+    
