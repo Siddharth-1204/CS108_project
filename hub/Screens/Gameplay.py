@@ -8,10 +8,11 @@ class Gameplay :
         self.screen = screen
         self.is_active = False
         self.clicked = False
-    def first_display(self, is_game_started):
+    def first_display(self, is_game_started, first_board_array):
         if not is_game_started :
             self.screen.blit(self.background_surf, (0, 0))
             self.screen.blit(self.gameclass.board, self.gameclass.board_rect)
+            self.gameclass.display(self.screen, first_board_array)
     def display(self, board):
         self.screen.blit(self.background_surf, (0, 0))
         self.gameclass.display(self.screen, board)

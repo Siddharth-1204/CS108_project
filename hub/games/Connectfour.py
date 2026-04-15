@@ -15,7 +15,7 @@ class Connectfour_class :
         board_transpose_array = board_array.transpose()
         board_1d_array = board_transpose_array[current_move]
         board_array[board_1d_array[board_1d_array == 0].size-1][current_move] = current_turn
-        return board_array
+        return board_array, 3-current_turn
     def is_game_ended(self, board_array, current_move):
         board_changed_vertical_line = (board_array.transpose())[current_move]
         first_index_of_move = board_changed_vertical_line[board_changed_vertical_line == 0].size
@@ -65,19 +65,17 @@ class Connectfour_class :
         return False, 0
     def display_board(self, screen):
         screen.blit(self.board, self.board_rect)
-    def display_coin(self, screen, center_x, center_y, board_array):
-        if board_array[int((2*(center_y-146)) / 175)][int((center_x-217)/94)] == 1:
-            pygame.draw.circle(screen, "#039BE5", (center_x, center_y), 37, width = 0)
-        elif board_array[int((2*(center_y-146)) / 175)][int((center_x-217)/94)] == 2:
-            pygame.draw.circle(screen, "#F4511E", (center_x, center_y), 37, width = 0)
+    def display_coin(self, i, j):
+        if self.board_array[j][i] == 1:
+            pygame.draw.circle(self.screen, "#039BE5", (217+94*i, 146+88*j), 37, width = 0)
+        elif self.board_array[j][i] == 2:
+            pygame.draw.circle(self.screen, "#F4511E", (217+94*i, 146+88*j), 37, width = 0)
     def display(self, screen, board_array):
         screen.blit(self.board, self.board_rect)
         self.screen = screen
-        center_x_array = np.linspace(217, 782, 7)*np.ones((7, 1))
-        center_y_array = (np.linspace(146, 673, 7)*np.ones((7, 1))).transpose()
-        for i in range(7):
-            for j in range(7) :
-                self.display_coin(screen, center_x_array[i][j], center_y_array[i][j], board_array)
+        self.board_array = board_array
+        display_vector = np.vectorize(self.display_coin)
+        work = display_vector(np.arange(0, 7, dtype = int)*np.ones((7, 1), dtype = int), (np.arange(0, 7, dtype = int)*np.ones((7, 1), dtype = int)).transpose())
     def get_move(self):
         mouse_pos = pygame.mouse.get_pos()
         if mouse_pos[1] < 80 and mouse_pos[1] > 0:

@@ -13,7 +13,7 @@ class Ttt_class :
         return False
     def next_board_state(self, current_turn, board_array, current_move):
         board_array[current_move[0]][current_move[1]] = current_turn
-        return board_array
+        return board_array, 3-current_turn
     def is_game_ended(self, board_array, current_move):
         horizontal_line = board_array[current_move[0],:]
         vertical_line = board_array[:,current_move[1]]
@@ -60,20 +60,19 @@ class Ttt_class :
         return False, 0
     def display_board(self, screen):
         screen.blit(self.board, self.board_rect)
-    def display_marks(self, screen, center_x, center_y, board_array):
-        if board_array[int((center_y-115)/70)][int((center_x-185)/70)] == 1:
-            pygame.draw.line(screen, "#fdd56c", (center_x-25, center_y-25), (center_x+25, center_y+25), width=5)
-            pygame.draw.line(screen, "#fdd56c", (center_x+25, center_y-25), (center_x-25, center_y+25), width=5)
-        elif board_array[int((center_y-115)/70)][int((center_x-185)/70)] == 2:
-            pygame.draw.circle(screen, "#6fa1d7", (center_x, center_y), 25, width = 5)
+    def display_marks(self, i, j):
+        if self.board_array[j][i] == 1:
+            pygame.draw.line(self.screen, "#fdd56c", (160+i*70, 90+j*70), (210+i*70, 140+j*70), width=5)
+            pygame.draw.line(self.screen, "#fdd56c", (210+i*70, 90+j*70), (160+i*70, 140+j*70), width=5)
+        elif self.board_array[j][i] == 2:
+            pygame.draw.circle(self.screen, "#6fa1d7", (185+i*70, 115+j*70), 25, width = 5)
+        return True
     def display(self, screen, board_array):
         screen.blit(self.board, self.board_rect)
         self.screen = screen
-        center_x_array = np.linspace(185, 815, 10)*np.ones((10, 1))
-        center_y_array = (np.linspace(115, 745, 10)*np.ones((10, 1))).transpose()
-        for i in range(10):
-            for j in range(10) :
-                self.display_marks(screen, center_x_array[i][j], center_y_array[i][j], board_array)
+        self.board_array = board_array
+        display_vector = np.vectorize(self.display_marks)
+        work = display_vector(np.arange(0, 10, dtype = int)*np.ones((10, 1), dtype = int), (np.arange(0, 10, dtype = int)*np.ones((10, 1), dtype = int)).transpose())
     def get_move(self):
         mouse_pos = pygame.mouse.get_pos()
         if mouse_pos[0] > 150 and mouse_pos[0] < 850 :

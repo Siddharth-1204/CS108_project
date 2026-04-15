@@ -23,11 +23,9 @@ class BaseGameClass :
         return False
     def next_state(self, move):
         if self.is_move_valid(move):
-            self.board = self.game.next_board_state(self.current_turn, self.board, move)
+            self.board, self.current_turn = self.game.next_board_state(self.current_turn, self.board, move)
             self.recent_move = move
             self.is_game_ended, self.who_won = self.game.is_game_ended(self.board, move)
-            if self.current_turn == 1: self.current_turn = 2
-            else : self.current_turn = 1
 
 pygame.init()
 display_screen = pygame.display.set_mode((1000, 800))
@@ -52,10 +50,10 @@ gameplay_background_surf = pygame.transform.scale(gameplay_background_surf, (100
 
 ttt_board_surf = pygame.image.load('media/images/tictactoe_board.png').convert_alpha()
 ttt_board_surf = pygame.transform.scale(ttt_board_surf, (700, 700))
-'''
-othello_board_surf = pygame.image.load('media/images/mainmenu_background.jpg').convert()
+
+othello_board_surf = pygame.image.load('media/images/othello_board.png').convert()
 othello_board_surf = pygame.transform.scale(othello_board_surf, (600, 600))
-'''
+
 
 connectfour_board_surf = pygame.image.load('media/images/connectfour_board.png').convert()
 connectfour_board_surf = pygame.transform.scale(connectfour_board_surf, (700, 700))
@@ -71,11 +69,11 @@ while True:
         if mainmenu.is_ttt_selected() :
             mainmenu.game_selected = True
             the_game_class = TicTacToe.Ttt_class(ttt_board_surf)
-        '''
+        
         if mainmenu.is_othello_selected() :
             mainmenu.game_selected = True
             the_game_class = Othello.Othello_class(othello_board_surf)
-        '''
+        
         if mainmenu.is_connectfour_selected() :
             mainmenu.game_selected = True
             the_game_class = Connectfour.Connectfour_class(connectfour_board_surf)
@@ -90,7 +88,7 @@ while True:
 
     elif gameplay.is_active :
         if basegameclass.is_game_ended == False :
-            gameplay.first_display(basegameclass.is_game_started)
+            gameplay.first_display(basegameclass.is_game_started, basegameclass.board)
             if pygame.mouse.get_pressed() == (True, False, False):
                 gameplay.clicked = True
             if gameplay.clicked and gameplay.released ():
