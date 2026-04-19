@@ -15,8 +15,9 @@ class BaseGameClass :
         self.is_game_ended = False
         self.board = gameclass.board_generate()
         self.game = gameclass
-        self.is_game_started = False
         self.who_won = 0
+        self.animating = False
+        self.started_animating = False
     def is_move_valid(self, move):
         if self.game.is_valid_move(self.current_turn, self.board, move):
             return True
@@ -26,12 +27,15 @@ class BaseGameClass :
             self.board, self.current_turn = self.game.next_board_state(self.current_turn, self.board, move)
             self.recent_move = move
             self.is_game_ended, self.who_won = self.game.is_game_ended(self.board, move)
+            if self.is_game_ended:
+                self.win_animation_started = True
 
 pygame.init()
 display_screen = pygame.display.set_mode((1000, 800))
 pygame.display.set_caption("Game Hub")
 clock = pygame.time.Clock()
 
+font_1 = pygame.font.Font("media/fonts/Pixeltype.ttf",size =  60)
 mainmenu_background_surf = pygame.image.load('media/images/mainmenu_background.png').convert()
 mainmenu_ttt_logo_surf = pygame.image.load('media/images/ttt_logo.jpg').convert()
 mainmenu_othello_logo_surf = pygame.image.load('media/images/othello_logo.jpg').convert()
@@ -80,26 +84,36 @@ while True:
         
         if mainmenu.game_selected == True :
             if mainmenu.released() == True :
-                gameplay = Gameplay.Gameplay(gameplay_background_surf, display_screen, the_game_class)
                 basegameclass = BaseGameClass(sys.argv[1], sys.argv[2], the_game_class)
+                gameplay = Gameplay.Gameplay(gameplay_background_surf, display_screen, the_game_class, font_1, basegameclass.player1, basegameclass.player2)
                 mainmenu.game_selected = False
                 mainmenu.is_active = False
                 gameplay.is_active = True
 
     elif gameplay.is_active :
-        if basegameclass.is_game_ended == False :
-            gameplay.first_display(basegameclass.is_game_started, basegameclass.board)
+        if basegameclass.is_game_ended == False and basegameclass.animating == False :
+            gameplay.display(basegameclass.board, basegameclass.current_turn, False, basegameclass.who_won)
             if pygame.mouse.get_pressed() == (True, False, False):
                 gameplay.clicked = True
             if gameplay.clicked and gameplay.released ():
                 if basegameclass.game.get_move() != -1 :
-                    basegameclass.is_game_started = True
-                    selectedmove = basegameclass.game.get_move()
-                    basegameclass.next_state(selectedmove)
-                    gameplay.display(basegameclass.board)
+                    basegameclass.selectedmove = basegameclass.game.get_move()
+                    if basegameclass.is_move_valid(basegameclass.selectedmove):
+                        basegameclass.animating = True
+                        basegameclass.started_animating = True
                 gameplay.clicked = False
+        elif basegameclass.is_game_ended == False and basegameclass.animating == True:
+            basegameclass.animating = gameplay.animate(basegameclass.board, basegameclass.selectedmove, basegameclass.current_turn, basegameclass.started_animating)
+            basegameclass.started_animating = False
+            if basegameclass.animating == False:
+                basegameclass.next_state(basegameclass.selectedmove)
+                gameplay.display(basegameclass.board, basegameclass.current_turn, basegameclass.is_game_ended, basegameclass.who_won)
         else :
-            gameplay.is_active = False
-            mainmenu.is_active = True
+            basegameclass.win_animating = gameplay.animate_win(basegameclass.board, basegameclass.current_turn, basegameclass.recent_move, basegameclass.win_animation_started, basegameclass.who_won)
+            basegameclass.win_animation_started = False
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_SPACE] and not basegameclass.win_animating:
+                gameplay.is_active = False
+                mainmenu.is_active = True
     pygame.display.update()
     clock.tick(60)
