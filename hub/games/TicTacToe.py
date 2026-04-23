@@ -189,5 +189,5 @@ class Ttt_class :
                 dl = 330-l
         pygame.draw.line(self.screen, (64, 64, 64), (x-25*mx, y-25*my), (x -25*mx + l*mx, y - 25*my + l*my), width=8)
         if l == 330 :
-            return False
-        return True
+            return (False, "TicTacToe")
+        return (True, "TicTacToe")

@@ -180,5 +180,5 @@ class Connectfour_class :
                 dl = 370-l
         pygame.draw.line(self.screen, (64, 64, 64), (x-44*mx, y-44*my), (x -44*mx + l*mx, y - 44*my + l*my), width=8)
         if l == 370 :
-            return False
-        return True
+            return (False, "Connectfour")
+        return (True, "Connectfour")

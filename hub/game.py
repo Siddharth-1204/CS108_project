@@ -62,6 +62,10 @@ othello_board_surf = pygame.transform.scale(othello_board_surf, (600, 600))
 connectfour_board_surf = pygame.image.load('media/images/connectfour_board.png').convert()
 connectfour_board_surf = pygame.transform.scale(connectfour_board_surf, (700, 700))
 
+
+
+
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -109,7 +113,7 @@ while True:
                 basegameclass.next_state(basegameclass.selectedmove)
                 gameplay.display(basegameclass.board, basegameclass.current_turn, basegameclass.is_game_ended, basegameclass.who_won)
         else :
-            basegameclass.win_animating = gameplay.animate_win(basegameclass.board, basegameclass.current_turn, basegameclass.recent_move, basegameclass.win_animation_started, basegameclass.who_won)
+            basegameclass.win_animating, basegameclass.game_name = gameplay.animate_win(basegameclass.board, basegameclass.current_turn, basegameclass.recent_move, basegameclass.win_animation_started, basegameclass.who_won)
             basegameclass.win_animation_started = False
             keys = pygame.key.get_pressed()
             if keys[pygame.K_SPACE] and not basegameclass.win_animating:

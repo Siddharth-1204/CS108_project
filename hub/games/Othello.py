@@ -341,4 +341,4 @@ class Othello_class:
         return True
 
     def animate_win(self, board_array, current_move, win_animation_started, winner):
-        return False
+        return (False, "Othello")
