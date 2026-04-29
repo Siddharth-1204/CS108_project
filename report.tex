@@ -1,0 +1,127 @@
+\documentclass[12pt]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+
+\geometry{margin=1in}
+
+% Header/Footer
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Game System Report}
+\lhead{Your Name}
+\rfoot{\thepage}
+
+% Title formatting
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+
+\title{
+    \textbf{Game System Report}\\
+    \large Course Project Report
+}
+\author{Your Name \\ Roll Number}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% --------------------------------------------------
+\section{Introduction}
+This project is a pygame based gamehub.
+
+% --------------------------------------------------
+\section{External Libraries Used}
+\begin{itemize}
+    \item \textbf{Library Name} -- Purpose of using it
+    \item \textbf{sys} -- Used for command line arguments and program exit
+    \item \textbf{pygame} -- rendering the frames for user interface
+    \item \textbf{numpy} -- core game logic like checking winning condition and move validity
+    \item \textbf{matplotlib} -- bargraphs and piecharts in analytics
+    \item \textbf{subprocess} -- running external commands
+    \item \textbf{csv} -- writing csv file from python file
+    \item \textbf{datetime} -- Used for adding date in history
+\end{itemize}
+
+% --------------------------------------------------
+\section{Features Implemented}
+\begin{itemize}
+    \item User authentication system
+    \item Multiple games support
+    \item Leaderboard with sorting options
+    \item Graphical analysis
+\end{itemize}
+
+% --------------------------------------------------
+\section{Code Architecture and Logic}
+
+\subsection{Generic Class Design}
+We used a generic class design which makes code very flexible for changes.All the interactions are handled in files game.py and gameplay.py and game files only contain methods about validating moves, processing move,checking winning condition etc .This makes adding new games simple
+
+
+
+\subsection{Game Implementations}
+We used classes seperately for every game containing methods like
+\begin{itemize}
+    \item for displaying board
+    \item for displaying pieces in board
+    \item for animating moves
+    \item for checking valid move
+    \item for next board state
+\end{itemize}
+
+\subsection{Authentication System}
+Authentication is done using username and password.All the user names and corresponding password hashed with SHA 256 are stored in csv file
+
+\subsection{Leaderboard System}
+Leaderboard is obtained by processing history file line by line using awk , wins and losses information stored using associative arrays. Data is sorted and organized using simple bash commands.
+
+% --------------------------------------------------
+\section{Hurdles Faced}
+\begin{itemize}
+    \item For finding appropriate numpy functions to use in checking is game ended without using loops
+    \item While implementing the logic which handles the flow of the game in game.py using all the classes defined in Screens and games folder
+\end{itemize}
+
+\subsection{How They Were Resolved}
+\begin{itemize}
+    \item Read the numpy documentation espectially API in numpy
+    \item Visited some famous pygame projects available online
+\end{itemize}
+
+% --------------------------------------------------
+\section{Future Improvements }
+\begin{itemize}
+    \item We can make UI experience smoother
+    \item We can make game look more professional with good background images and good logos
+    \item We can add more games
+    \item We can add deeper animations
+\end{itemize}
+
+% --------------------------------------------------
+\section{Conclusion}
+We learned how to create games using pygame, we also went through numpy documentation many times so that we learned most of the functions in numpy.We learned how to store passwords effectively.We learned how to manage files in a project and how to use git in team projects.
+
+% --------------------------------------------------
+\section{Bibliography}
+\begin{itemize}
+    \item \href{https://docs.python.org/3/library/index.html}{python}
+    \item \href{https://docs.python.org/3/library/csv.html}{csv}
+    \item \href{https://docs.python.org/3/library/datetime.html#module-datetime}{datetime}
+    \item \href{https://docs.python.org/3/library/subprocess.html#module-subprocess}{datetime}
+    \item \href{https://www.pygame.org/docs/}{pygame}
+    \item \href{https://numpy.org/doc/2.4/}{numpy}
+    \item \href{https://matplotlib.org/3.5.3/api/_as_gen/matplotlib.pyplot.html}{matplotlib}
+   
+\end{itemize}
+
+\end{document}
