@@ -4,7 +4,7 @@ BEGIN{
 }
 {
     wins_player_game[$1 "," $4]++
-    loses_player_game[$2 "," $4]++
+    losses_player_game[$2 "," $4]++
     player[$1,$4]=1
     player[$2,$4]=1
 }
@@ -14,7 +14,8 @@ END{
         split(string,arr,",")
 
         game = arr[2]
-        player = arr[1]
+        gamer = arr[1]
+        key = gamer,game
 
         wins = wins_player_game[key] + 0
         losses = losses_player_game[key] + 0
@@ -22,10 +23,10 @@ END{
         if(losses == 0)
             ratio = "-"
         else
-            ratio = sprintf("%.2f" , w/l)
+            ratio = sprintf("%.2f" , wins/losses)
 
         printf "%s,%s,%d,%d,%s\n",
-                player,game,wins,losses,ratio 
+                gamer,game,wins,losses,ratio 
         }
     
 }

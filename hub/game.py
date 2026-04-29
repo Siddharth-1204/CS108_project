@@ -1,8 +1,13 @@
 import sys
 import pygame
 import numpy as np
+import subprocess
+import csv
+import datetime
 import Screens.Mainmenu as Mainmenu
 import Screens.Gameplay as Gameplay
+import Screens.Analytics as Analytics
+import Screens.Postgame as Postgame
 import games.TicTacToe as TicTacToe
 import games.Othello as Othello
 import games.Connectfour as Connectfour
@@ -58,12 +63,14 @@ ttt_board_surf = pygame.transform.scale(ttt_board_surf, (700, 700))
 othello_board_surf = pygame.image.load('media/images/othello_board.png').convert()
 othello_board_surf = pygame.transform.scale(othello_board_surf, (600, 600))
 
-
 connectfour_board_surf = pygame.image.load('media/images/connectfour_board.png').convert()
 connectfour_board_surf = pygame.transform.scale(connectfour_board_surf, (700, 700))
 
+mm_logo_surf = pygame.image.load('media/images/ttt_logo.jpg').convert()
+mm_logo_surf = pygame.transform.scale(mm_logo_surf, (200, 200))
 
-
+exit_logo_surf = pygame.image.load('media/images/othello_logo.jpg').convert()
+exit_logo_surf = pygame.transform.scale(exit_logo_surf, (200, 200))
 
 
 while True:
@@ -117,7 +124,46 @@ while True:
             basegameclass.win_animation_started = False
             keys = pygame.key.get_pressed()
             if keys[pygame.K_SPACE] and not basegameclass.win_animating:
+                gameplay.ended = True
+            if gameplay.ended and gameplay.space_released():
+                analytics = Analytics.Analytics(gameplay_background_surf, display_screen, font_1)
                 gameplay.is_active = False
+                analytics.is_active = True
+                gameplay.ended = False
+                if basegameclass.who_won == 1:
+                    winner, loser = basegameclass.player1, basegameclass.player2
+                else :
+                    basegameclass.player2,basegameclass.player1
+
+                with open('history.csv','a') as history :
+                    writer = csv.writer(history)
+                    writer.writerow([basegameclass.player1, basegameclass.player2, basegameclass.won, datetime.date.today(), basegameclass.game_name])
+
+    elif analytics.is_active :
+        analytics.display(basegameclass.player1, basegameclass.player2, basegameclass.who_won, basegameclass.game_name)
+        if pygame.mouse.get_pressed() == (True, False, False):
+            analytics.pressed = True
+        if analytics.pressed and analytics.released():
+            argument = analytics.leaderboard()
+            subprocess.run(["bash", "./leaderboard.sh", argument])
+            analytics.pressed = False
+            postgame = Postgame.Postgame(gameplay_background_surf, display_screen, font_1, mm_logo_surf, exit_logo_surf)
+            analytics.is_active = False
+            postgame.is_active = True
+
+
+    elif postgame.is_active :
+        postgame.display()
+        if pygame.mouse.get_pressed() == (True, False, False):
+            postgame.pressed = True
+        if postgame.pressed and postgame.released() :
+            if postgame.get_option() == "MM":
+                postgame.is_active = False
                 mainmenu.is_active = True
+            elif postgame.get_option() == "Exit" :
+                postgame.is_active = False
+                pygame.quit()
+                sys.exit()
+            postgame.pressed = False
     pygame.display.update()
     clock.tick(60)

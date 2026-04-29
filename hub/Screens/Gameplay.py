@@ -11,6 +11,7 @@ class Gameplay :
         self.font = font
         self.is_active = False
         self.clicked = False
+        self.ended = False
     def display(self, board, turn, is_game_ended, winner):
         self.screen.blit(self.background_surf, (0, 0))
         self.gameclass.display(self.screen, board, self.font, self.player1, self.player2, turn, is_game_ended, winner)
@@ -23,3 +24,8 @@ class Gameplay :
     def animate_win(self, board_array, current_turn, recent_move, win_animation_started, winner):
         self.display(board_array, current_turn, True, winner)
         return self.gameclass.animate_win(board_array, recent_move, win_animation_started, winner)
+    def space_released(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE]:
+            return False
+        return True
