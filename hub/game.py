@@ -1,6 +1,7 @@
 import sys
 import pygame
 import numpy as np
+import matplotlib.pyplot as plt
 import subprocess
 import csv
 import datetime
@@ -130,15 +131,19 @@ while True:
                 gameplay.is_active = False
                 analytics.is_active = True
                 gameplay.ended = False
-                if basegameclass.who_won == 1:
-                    winner, loser = basegameclass.player1, basegameclass.player2
-                else :
-                    basegameclass.player2,basegameclass.player1
+                
+                winner,loser = basegameclass.player1,basegameclass.player2
+                if basegameclass.who_won == 2:
+                    winner,loser = loser,winner
+                elif basegameclass.who_won == 0 :
+                    winner,loser = "tie","tie"
+
+                
 
                 with open('history.csv','a') as history :
                     writer = csv.writer(history)
-                    writer.writerow([basegameclass.player1, basegameclass.player2, basegameclass.won, datetime.date.today(), basegameclass.game_name])
-
+                    writer.writerow([basegameclass.player1, basegameclass.player2, winner,loser , datetime.date.today(), basegameclass.game_name])
+        
     elif analytics.is_active :
         analytics.display(basegameclass.player1, basegameclass.player2, basegameclass.who_won, basegameclass.game_name)
         if pygame.mouse.get_pressed() == (True, False, False):
