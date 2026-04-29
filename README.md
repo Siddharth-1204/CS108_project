@@ -1,26 +1,18 @@
-#Project
+# Project
 A mini 2-player gaming hub
 
-#Initializing	
+# Initializing	
 bash main.sh
 
-#File Structure
--README
--hub/
-   -main.sh
-   -game.py
-   -leaderboard.sh
-   -game.py/
-      -tictactoe.py
-      -othello.py
-      -connect4.py
-   -users.tsv
-   -history.csv
+# Using interface
+After authentication you will see mainmenu with three games to choose from.
+After completion of game you will see game winner and sort options for leaderboard and graphical analytics.
+Then you will have an option to exit or play again which will take you back to mainmenu.
 
-#Files Description
-
-main.sh     - 1) authenticates a user login or creates a new user
-              2) calls game.py if authentication is succesful
-users.tsv   - contains usernames and *hash passwords
-game.py     -
-history.csv - contains details of game played ,date,winner,loser 
+# Games
+## 1.TicTacToes
+classic tictactoe woth 10x10 board with 5 in a row as winnig condition
+## 2.Connectfour
+classic connectfour with 7x7 board with 4 in a row as winnig condition
+## 3.Othello
+classic othello
