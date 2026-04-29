@@ -5,7 +5,6 @@ echo "Enter password :"
 read -s pass1
 Hashpass1=$(echo -n "${pass1}" | sha256sum | awk '{print $1}')
 
-# FIX: correct grep usage (no ${^name1})
 userline1=$(grep "^${name1}," users.csv)
 
 input="nothing"
