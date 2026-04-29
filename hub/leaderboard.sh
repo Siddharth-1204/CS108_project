@@ -6,25 +6,23 @@ awk -F',' '
     # skip malformed or empty rows early
     if (NF < 6) next
 
-    # trim whitespace from all fields
-    for (i = 1; i <= NF; i++) {
-        gsub(/^[ \t]+|[ \t]+$/, "", $i)
-    }
+   
 
-    p1 = $1
-    p2 = $2
+    player1 = $1
+    player2 = $2
     winner = $3
     game = $6
 
     # skip invalid entries
-    if (winner == "" || game == "" || p1 == "" || p2 == "") next
-
+    if (winner == "" || game == "" || player1 == "" || player2 == "") next
+    
+    # skip tie cases
     if (winner != "tie") {
-        loser = (winner == p1 ? p2 : p1)
+        loser = (winner == playe1 ? player2 : player1)
 
         wins[winner, game]++
         losses[loser, game]++
-
+    # array of all player and game pairs
         players[winner, game] = 1
         players[loser, game] = 1
     }
@@ -64,4 +62,4 @@ END {
             sort -t',' -k3,3nr
             ;;
     esac
-}
+} | column -t -s ','

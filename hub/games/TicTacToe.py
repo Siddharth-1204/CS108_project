@@ -7,19 +7,25 @@ class Ttt_class :
         self.board = board
         self.board_rect = self.board.get_rect(center = (500, 430))
     def board_generate(self):
+        # create empty 10x10 board
         return np.zeros((10, 10))
     def is_valid_move(self, current_turn, board_array, current_move):
+        # move valid if cell is empty
         if board_array[current_move[0]][current_move[1]] == 0:
             return True
         return False
     def next_board_state(self, current_turn, board_array, current_move):
+        # place move and switch turn
         board_array[current_move[0]][current_move[1]] = current_turn
         return board_array, 3-current_turn
+
     def is_game_ended(self, board_array, current_move):
+        # check horizontal, vertical and diagonals for 5 in a row
         horizontal_line = board_array[current_move[0],:]
         vertical_line = board_array[:,current_move[1]]
         current_turn = board_array[current_move[0]][current_move[1]]
 
+        # horizontal check using padding trick
         new_horizontal_line = np.hstack((np.zeros(1), horizontal_line, np.zeros(1)))
         is_cell_in_horizontal_current_turn = (new_horizontal_line == current_turn)
         not_maching_indices_horizontal = np.argwhere(is_cell_in_horizontal_current_turn == False)
@@ -27,6 +33,7 @@ class Ttt_class :
         if (not_matching_indices_diff_horizontal >= 6).any() :
             return True, current_turn
         
+        # vertical check
         new_vertical_line = np.hstack((np.zeros(1), vertical_line, np.zeros(1)))
         is_cell_in_vertical_current_turn = (new_vertical_line == current_turn)
         not_maching_indices_vertical = np.argwhere(is_cell_in_vertical_current_turn == False)
@@ -34,11 +41,14 @@ class Ttt_class :
         if (not_matching_indices_diff_vertical >= 6).any() :
             return True, current_turn
 
+        # diagonal top-left to bottom-right
         no_of_diagonal_cells_left_top = 10 - abs(current_move[1] - current_move[0])
         if current_move[1] >= current_move[0]:
             diagonal_array_top_left = board_array[np.arange(0, no_of_diagonal_cells_left_top, dtype = int), np.arange(current_move[1] - current_move[0], 10, dtype = int)]
+            current_index = current_move[0]
         else :
             diagonal_array_top_left = board_array[np.arange(current_move[0] - current_move[1], 10, dtype = int), np.arange(0, no_of_diagonal_cells_left_top, dtype = int)]
+            current_index = current_move[1]
         new_diagonal_array_top_left = np.hstack((np.zeros(1), diagonal_array_top_left, np.zeros(1)))
         is_diagonal_top_left_array_cell_current_turn = (new_diagonal_array_top_left == current_turn)
         not_matching_indices_list_diagonal_top_left = np.argwhere(is_diagonal_top_left_array_cell_current_turn == False)
@@ -46,11 +56,14 @@ class Ttt_class :
         if (not_matching_indices_list_diagonal_top_left_diff >= 6).any() :
             return True, current_turn
 
+        # diagonal top-right to bottom-left
         no_of_diagonal_cells_top_right = 10 - abs(current_move[1] + current_move[0] - 9)
         if current_move[1] + current_move[0] <= 9:
             diagonal_array_top_right = board_array[np.arange(0, no_of_diagonal_cells_top_right, dtype = int), np.arange(no_of_diagonal_cells_top_right-1, -1, -1, dtype = int)]
+            current_index = current_move[0]
         else :
             diagonal_array_top_right = board_array[np.arange(current_move[1] + current_move[0] - 9, 10, dtype = int), np.arange(9, current_move[1] + current_move[0] - 10, -1, dtype = int)]
+            current_index = 9 - current_move[1]
         new_diagonal_array_top_right = np.hstack((np.zeros(1), diagonal_array_top_right, np.zeros(1)))
         is_diagonal_top_right_array_cell_current_turn = (new_diagonal_array_top_right == current_turn)
         not_matching_indices_list_diagonal_top_right = np.argwhere(is_diagonal_top_right_array_cell_current_turn == False)
@@ -58,11 +71,13 @@ class Ttt_class :
         if (not_matching_indices_list_diagonal_top_right_diff >= 6).any() :
             return True, current_turn
 
+        # if board full → tie
         if (board_array != 0).all() :
             return True, 0
 
         return False, 0
     def display_marks(self, i, j):
+        # draw X or O
         if self.board_array[j][i] == 1:
             pygame.draw.line(self.screen, "#fdd56c", (160+i*70, 90+j*70), (210+i*70, 140+j*70), width=6)
             pygame.draw.line(self.screen, "#fdd56c", (210+i*70, 90+j*70), (160+i*70, 140+j*70), width=6)
@@ -70,6 +85,7 @@ class Ttt_class :
             pygame.draw.circle(self.screen, "#6fa1d7", (185+i*70, 115+j*70), 25, width = 5)
         return True
     def display(self, screen, board_array, font, username1, username2, turn, is_game_ended, winner):
+        # display board and turn/winner text
         screen.blit(self.board, self.board_rect)
         if not is_game_ended:
             player = username1 if turn == 1 else username2
@@ -79,21 +95,28 @@ class Ttt_class :
             player = username1 if turn == 2 else username2
             colour = "#fdd56c" if turn == 2 else "#6fa1d7"
             text_surface = font.render(f"{player} won", False, colour)
+            text_surface_2 = font.render("Press space to continue", False, (64, 64, 64))
         else:
             text_surface = font.render("Match tied", False, (64, 64, 64))
+            text_surface_2 = font.render("Press space to continue", False, (64, 64, 64))
         text_rect = pygame.Surface.get_rect(text_surface, midtop = (500, 10))
         screen.blit(text_surface, text_rect)
+        if is_game_ended :
+            text_rect_2 = pygame.Surface.get_rect(text_surface_2, midtop = (500, 40))
+            screen.blit(text_surface_2, text_rect_2)
         self.screen = screen
         self.board_array = board_array
         display_vector = np.vectorize(self.display_marks)
         work = display_vector(np.arange(0, 10, dtype = int)*np.ones((10, 1), dtype = int), (np.arange(0, 10, dtype = int)*np.ones((10, 1), dtype = int)).transpose())
     def get_move(self):
+        # convert mouse click to board position
         mouse_pos = pygame.mouse.get_pos()
         if mouse_pos[0] > 150 and mouse_pos[0] < 850 :
             if mouse_pos[1] > 80 and mouse_pos[1] < 780 :
                 return ((mouse_pos[1]-80)//70 , (mouse_pos[0]-150)//70)
         return -1
     def animate(self, screen, board_array, selected_move, current_turn, started_animating):
+        # animate X or O drawing
         if current_turn == 2:
             global r, dr
             if started_animating:
@@ -122,6 +145,7 @@ class Ttt_class :
                 return False
             return True
     def animate_win(self, board_array, current_move, win_animation_started, winner):
+        # animate winning line
         global l, dl, mx, my, x, y
         if winner == 0:
             return False
@@ -130,6 +154,7 @@ class Ttt_class :
             vertical_line = board_array[:,current_move[1]]
             current_turn = board_array[current_move[0]][current_move[1]]
 
+            # detect horizontal win
             new_horizontal_line = np.hstack((np.zeros(1), horizontal_line, np.zeros(1)))
             is_cell_in_horizontal_current_turn = (new_horizontal_line == current_turn)
             not_maching_indices_horizontal = np.argwhere(is_cell_in_horizontal_current_turn == False)
@@ -139,6 +164,7 @@ class Ttt_class :
                 horizontal_left = np.argwhere(new_horizontal_line[:current_move[1]+1] != current_turn)
                 coins_left_side = current_move[1]- horizontal_left[-1][0]
             
+            # detect vertical win
             new_vertical_line = np.hstack((np.zeros(1), vertical_line, np.zeros(1)))
             is_cell_in_vertical_current_turn = (new_vertical_line == current_turn)
             not_maching_indices_vertical = np.argwhere(is_cell_in_vertical_current_turn == False)
@@ -148,6 +174,7 @@ class Ttt_class :
                 vertical_left = np.argwhere(new_vertical_line[:current_move[0]+1] != current_turn)
                 coins_left_side = current_move[0] - vertical_left[-1][0]
 
+            # detect diagonal TL-BR
             no_of_diagonal_cells_left_top = 10 - abs(current_move[1] - current_move[0])
             if current_move[1] >= current_move[0]:
                 diagonal_array_top_left = board_array[np.arange(0, no_of_diagonal_cells_left_top, dtype = int), np.arange(current_move[1] - current_move[0], 10, dtype = int)]
@@ -164,6 +191,7 @@ class Ttt_class :
                 top_left_left = np.argwhere(new_diagonal_array_top_left[:current_index+1] != current_turn)
                 coins_left_side = current_index - top_left_left[-1][0]
 
+            # detect diagonal TR-BL
             no_of_diagonal_cells_top_right = 10 - abs(current_move[1] + current_move[0] - 9)
             if current_move[1] + current_move[0] <= 9:
                 diagonal_array_top_right = board_array[np.arange(0, no_of_diagonal_cells_top_right, dtype = int), np.arange(no_of_diagonal_cells_top_right-1, -1, -1, dtype = int)]
@@ -179,6 +207,8 @@ class Ttt_class :
                 mx, my = 1, -1
                 top_right_right = np.argwhere(new_diagonal_array_top_right[current_index+2:] != current_turn)
                 coins_left_side = top_right_right[0][0]
+
+            # compute starting point of line
             x = int(185+current_move[1]*70 - 70*coins_left_side*mx)
             y = int(115+current_move[0]*70 - 70*coins_left_side*my)
             l = 0
@@ -187,7 +217,10 @@ class Ttt_class :
             l+=dl
             if l+dl > 330:
                 dl = 330-l
+
+        # draw growing line
         pygame.draw.line(self.screen, (64, 64, 64), (x-25*mx, y-25*my), (x -25*mx + l*mx, y - 25*my + l*my), width=8)
+
         if l == 330 :
             return (False, "TicTacToe")
         return (True, "TicTacToe")

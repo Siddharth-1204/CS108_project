@@ -39,6 +39,7 @@ class Analytics :
             return "Loses"
         if self.option3_rect.collidepoint(mouse_pos):
             return "W/L ratio"
+        return "Nothing"
     def released(self):
         if pygame.mouse.get_pressed() == (True, False, False):
             return False
