@@ -23,7 +23,7 @@ class Analytics :
         leaderboard_rect = pygame.Surface.get_rect(leaderboard_surf, midtop = (500, 400))
         self.screen.blit(leaderboard_surf, leaderboard_rect)
         self.option1_surf = self.font.render(" Wins ", False, (0, 0, 0))
-        self.option2_surf = self.font.render(" Loses ", False, (0, 0, 0))
+        self.option2_surf = self.font.render(" Losses ", False, (0, 0, 0))
         self.option3_surf = self.font.render(" W/L ratio ", False, (0, 0, 0))
         self.option1_rect = pygame.Surface.get_rect(self.option1_surf, midtop = (300, 600))
         self.option2_rect = pygame.Surface.get_rect(self.option2_surf, midtop = (480, 600))
@@ -34,11 +34,11 @@ class Analytics :
     def leaderboard(self):
         mouse_pos = pygame.mouse.get_pos()
         if self.option1_rect.collidepoint(mouse_pos):
-            return "Wins"
+            return "wins"
         if self.option2_rect.collidepoint(mouse_pos):
-            return "Loses"
+            return "losses"
         if self.option3_rect.collidepoint(mouse_pos):
-            return "W/L ratio"
+            return "ratio"
         return "Nothing"
     def released(self):
         if pygame.mouse.get_pressed() == (True, False, False):

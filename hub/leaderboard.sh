@@ -18,7 +18,7 @@ awk -F',' '
     
     # skip tie cases
     if (winner != "tie") {
-        loser = (winner == playe1 ? player2 : player1)
+        loser = (winner == player1 ? player2 : player1)
 
         wins[winner, game]++
         losses[loser, game]++
